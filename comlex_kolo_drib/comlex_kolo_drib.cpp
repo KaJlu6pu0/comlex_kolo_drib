@@ -1,80 +1,70 @@
+#define _USE_MATH_DEFINES
 #include <iostream>
 #include <cmath>
-using namespace std;
+#include <Windows.h>
 
-class Complex {
+using namespace std;    
+
+class Circle {
 private:
-    double dijsna;
-    double ujava;
+    double radius;
 
 public:
-    Complex() : dijsna(0), ujava(0) {}
-    Complex(double r) : dijsna(r), ujava(0) {}
-    Complex(double r, double i) : dijsna(r), ujava(i) {}
+    Circle() : radius(0) {}
+    Circle(double r) : radius(r) {}
 
-    Complex operator+(const Complex& b) const {
-        return Complex(dijsna + b.dijsna, ujava + b.ujava);
+    double getRadius() const { 
+        return radius; }
+
+    double length() const { 
+        return 2 * M_PI * radius; }
+
+    bool operator==(const Circle& other) const {
+        return radius == other.radius;
     }
 
-    Complex operator-(const Complex& b) const {
-        return Complex(dijsna - b.dijsna, ujava - b.ujava);
+    bool operator>(const Circle& other) const {
+        return this->length() > other.length();
     }
 
-    friend Complex operator*(const Complex& a, const Complex& b) {
-        return Complex(a.dijsna * b.dijsna - a.ujava * b.ujava,
-            a.dijsna * b.ujava + a.ujava * b.dijsna);
+    Circle& operator+=(double value) {
+        radius += value;
+        if (radius < 0) radius = 0;
+        return *this;
     }
 
-    bool operator==(const Complex& b) const {
-        return (dijsna == b.dijsna) && (ujava == b.ujava);
+    Circle& operator-=(double value) {
+        radius -= value;
+        if (radius < 0) radius = 0;
+        return *this;
     }
 
-    bool operator!=(const Complex& b) const {
-        return !(*this == b);
-    }
-
-    bool operator!() const {
-        return (dijsna == 0) && (ujava == 0);
-    }
-
-    double operator()() const {
-        return sqrt(dijsna * dijsna + ujava * ujava);
-    }
-
-    friend ostream& operator<<(ostream& os, const Complex& c) {
-        if (c.ujava >= 0)
-            os << c.dijsna << " + " << c.ujava << "i";
-        else
-            os << c.dijsna << " - " << -c.ujava << "i";
+    friend ostream& operator<<(ostream& os, const Circle& c) {
+        os << "Radius = " << c.radius << ", Length = " << c.length();
         return os;
     }
-
-    friend istream& operator>>(istream& is, Complex& c) {
-        is >> c.dijsna >> c.ujava;
-        return is;
-    }
 };
+
 int main() {
-    Complex a, b;
+	
+    SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+    
+    Circle c1(10), c2(5);
 
-    cout << "Enter the first complex number (real imaginary): ";
-    cin >> a;
+    cout << "Circle 1: " << c1 << endl;
+    cout << "Circle 2: " << c2 << endl;
 
-    cout << "Enter the second complex number (real imaginary): ";
-    cin >> b;
+    if (c1 == c2) cout << "Радіуси рівні\n";
+    else cout << "Радіуси різні\n";
 
-    cout << "\nFirst complex number: " << a;
-    cout << "\nSecond complex number: " << b;
+    if (c1 > c2) cout << "Довжина першого кола більша\n";
+    else cout << "Довжина першого кола не більша\n";
 
-    cout << "\n\nSum: " << a + b;
-    cout << "\nDifference: " << a - b;
+    c1 += 3;
+    cout << "\nПісля c1 += 3: " << c1 << endl;
 
-    cout << "\n\nChecking for equality: ";
-    if (a == b) cout << "a == b";
-    else cout << "a != b";
+    c2 -= 4;
+    cout << "Після c2 -= 4: " << c2 << endl;
 
-    cout << "\n\nModule of the first: " << a();
-    cout << "\nModule of the second: " << b();
-
-    cout << endl;
 }
