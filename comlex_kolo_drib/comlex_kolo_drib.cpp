@@ -1,70 +1,88 @@
-#define _USE_MATH_DEFINES
 #include <iostream>
-#include <cmath>
-#include <Windows.h>
+using namespace std;
 
-using namespace std;    
-
-class Circle {
+class Drib {
 private:
-    double radius;
+    int s1;
+    int s2;
+
+    void q() {
+        int d = gcd(abs(s1), abs(s2));
+        s1 /= d;
+        s2 /= d;
+        if (s2 < 0) {
+            s1 = -s1;
+            s2 = -s2;
+        }
+    }
+
+    int gcd(int a, int b) const {
+        while (b != 0) {
+            int t = a % b;
+            a = b;
+            b = t;
+        }
+        return a;
+    }
 
 public:
-    Circle() : radius(0) {}
-    Circle(double r) : radius(r) {}
-
-    double getRadius() const { 
-        return radius; }
-
-    double length() const { 
-        return 2 * M_PI * radius; }
-
-    bool operator==(const Circle& other) const {
-        return radius == other.radius;
+    Drib(int num = 0, int den = 1) {
+        s1 = num;
+        s2 = (den == 0) ? 1 : den;
+        q();
     }
 
-    bool operator>(const Circle& other) const {
-        return this->length() > other.length();
+    void input() {
+        cout << "Enter numerator: ";
+        cin >> s1;
+        cout << "Enter denominator: ";
+        cin >> s2;
+        if (s2 == 0) {
+            cout << "Denominator cannot be 0! Setting to 1.\n";
+            s2 = 1;
+        }
+        q();
     }
 
-    Circle& operator+=(double value) {
-        radius += value;
-        if (radius < 0) radius = 0;
-        return *this;
+    void dis() const {
+        cout << s1 << "/" << s2;
     }
 
-    Circle& operator-=(double value) {
-        radius -= value;
-        if (radius < 0) radius = 0;
-        return *this;
+    Drib operator+(const Drib& other) const {
+        return Drib(s1 * other.s2 + other.s1 * s2, s2 * other.s2);
     }
 
-    friend ostream& operator<<(ostream& os, const Circle& c) {
-        os << "Radius = " << c.radius << ", Length = " << c.length();
-        return os;
+    Drib operator-(const Drib& other) const {
+        return Drib(s1 * other.s2 - other.s1 * s2, s2 * other.s2);
+    }
+
+    Drib operator*(const Drib& other) const {
+        return Drib(s1 * other.s1, s2 * other.s2);
+    }
+
+    Drib operator/(const Drib& other) const {
+        return Drib(s1 * other.s2, s2 * other.s1);
     }
 };
 
 int main() {
-	
-    SetConsoleCP(1251);
-	SetConsoleOutputCP(1251);
-    
-    Circle c1(10), c2(5);
+    Drib f1, f2;
+    cout << "Enter first fraction:\n";
+    f1.input();
+    cout << "Enter second fraction:\n";
+    f2.input();
 
-    cout << "Circle 1: " << c1 << endl;
-    cout << "Circle 2: " << c2 << endl;
+    cout << "\nSum: ";
+    (f1 + f2).dis();
 
-    if (c1 == c2) cout << "Радіуси рівні\n";
-    else cout << "Радіуси різні\n";
+    cout << "\nDifference: ";
+    (f1 - f2).dis();
 
-    if (c1 > c2) cout << "Довжина першого кола більша\n";
-    else cout << "Довжина першого кола не більша\n";
+    cout << "\nProduct: ";
+    (f1 * f2).dis();
 
-    c1 += 3;
-    cout << "\nПісля c1 += 3: " << c1 << endl;
+    cout << "\nDivision: ";
+    (f1 / f2).dis();
 
-    c2 -= 4;
-    cout << "Після c2 -= 4: " << c2 << endl;
-
+    cout << endl;
 }
